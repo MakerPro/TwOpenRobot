@@ -3,6 +3,11 @@
 import platform, serial, serial.tools.list_ports, time
 from ctypes import c_ushort
 
+#debug hack
+import json
+import glob
+import time
+
 
 __author__    = 'Kazuyuki TAKASE'
 __author__    = 'Yugo KAJIWARA'
@@ -15,7 +20,7 @@ class Core:
 		self._serial     = None
 		self._DEVICE_MAP = device_map
 		self._values     = [ 0 for x in range(24) ]
-		self.debugmode=1
+		self.debugmode=1 #debug hack
 
 	def serial_write(self,cmd,fun_name=""):
 		if self.debugmode==1:
@@ -56,11 +61,33 @@ class Core:
 		self.serial_write(cmd,"stop")
 
 		return True
+	
+	def mytest(self,slot_id):
+		print("mytest slot id=%d" %(slot_id))
 
+		json_list = glob.glob("./motion/*.json")
+		for json1 in json_list:	
+			print("json name=" + json1)
+			if str.find(json1,"Empty")>=0:
+				print("skip " + json1)
+			else:
+				with open(json1) as json_file:
+					json_data = json.load(json_file)
+					#print(json_data)
+					print("Installing "+ json1)
+					self.install(json_data)
+					time.sleep(1)
+					
 	def install(self, json):
 		if self._serial == None:
 			return False
-
+		#debug hack, when slot id = 0x45. We will install all json file in the motion sub directory
+		if(json["slot"]==0x45):
+			self.mytest(json["slot"])
+			return
+		else:
+			pass
+			#print(str(json))
 		# コマンドの指定
 		cmd = ">IN"
 

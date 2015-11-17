@@ -1,3 +1,6 @@
+MotionInstallDetail.log
+	The installation log when install all default motion files by using hacked control server. To use this, load on json file with slot id = 0x45. It will install all json file in the motion subdirectory
+
 core.py:
 	To enable control server can print all commands information that send to UART/USB.
 	How:
